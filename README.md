@@ -217,23 +217,25 @@ We can also add new notes...
     >>> for idx in range(3):
     >>>     doc = doc.add_note(text='New note #%d' % idx)
 
-Or edit an existing note...
+Edit an existing note...
 
     >>> doc = doc.notes[2].edit(completed=True)
+
+Or delete an existing note…
 
     >>> doc = doc.notes[0].delete()
 
 If we attempt to use a form with incorrect parameters, the client library will alert us.
 
     >>> doc = doc.add_note()
-    SDFSDFSSDGSDFE
+    ValueError: Missing required parameter 'text'
     
     >>> doc = doc.add_note(foobar='New note')
-    DGDFGDFFD
+    ValueError: Unknown parameter 'foobar'
 
 #### Searching
 
-As well as the 
+As well as the forms for creating, editing and deleting notes, our document also contains a form for searching the existing notes:
 
     >>> doc = doc.search(term='garage')
     >>> print doc.notes
@@ -248,21 +250,25 @@ As well as the
 
 #### Following links
 
+Finally, let's take a look at using links within the document.  There are a set of links nested under the `tabs` object, that we can follow.  First let's retrieve a document containing all the completed notes.
+
     >>> doc = doc.tabs.completed.get()
     >>> for note in doc.notes:
     >>>     print note.completed, note.text
 
+The client returns a new document after any form or link, so we can chain
 
     >>> doc = doc.tabs.incomplete.get().search(term='garage')
-    >>> print doc.notes
+    >>> for note in doc.notes:
+    >>>     print note.completed, note.text
 
 ---
 
 ## Writing DocJSON services
 
-DocJSON is of course language independant, and you should be able to develop DocJSON services in any decent server-side framework, such as Rails, Django or Node.
+DocJSON is of course a language independant format, and you should be able to develop DocJSON services in any decent server-side framework, such as Rails, Django or Node.
 
-The example service used above is developed using Django REST framework, you can take a look here [TODO]
+The example service used above is developed using Django REST framework.  You can take a look at the server implementation here [TODO]
 
 
 ## Why you should be excited
@@ -271,7 +277,7 @@ The `docjson` client we've demonstrated doesn't have an prior knowledge about th
 
 It's simple, discoverable, and the client will always be instantly up to date with any server-side API changes.
 
-DocJSON is appropriate for a very wide range of APIs, as it allows for flexible data representation, and supports a full range of hypermedia controls rather than just links or just CRUD-style interactions.
+DocJSON is appropriate for a very wide range of APIs, as it allows for flexible data representation, and supports a full range of hypermedia controls rather than just hyperlinks, or just CRUD-style interactions.
 
 ## The future, and what you can do to help
 
