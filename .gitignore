@@ -1,0 +1,3 @@
+python-client/dist/
+python-client/docjson.egg-info/
+*.pyc
