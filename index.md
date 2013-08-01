@@ -1,18 +1,17 @@
-# DocJSON
-
-![DocJSON](docjson.png)
-
-**JSON hypermedia documents** 
+---
+layout: default
+title: DocJSON
+---
 
 DocJSON is a simple document format for building Hypermedia Web APIs.
 
 A DocJSON document consists of standard JSON, with the addition of a set of hypermedia controls that are used to express the actions that may be taken.  DocJSON is a flexible document format and does not impose any structural restrictions either on the data representation style, or on the layout of hypermedia controls used within the document.
 
+**Warning:** *The DocJSON specification is currently in draft, and is subject to change at any time.*
+
 ---
 
 ## Specification
-
-**Warning:** *The DocJSON specification is currently in draft, and is subject to change at any time.*
 
 A document may be any valid JSON, with the single restriction that the object key `"_type"` is reserved. An JSON object which contains a key named `"_type"` is considered a control object.
 
@@ -29,10 +28,12 @@ A DocJSON link is a control element that represents a hyperlink that may be foll
 
 #### Example
 
+{% highlight json %}
     {
         "_type": "link",
         "href": "http://todo.example.com/?completed=True"
     }
+{% endhighlight %}
 
 ### Form
 
@@ -47,6 +48,7 @@ A DocJSON form is a control element that enables arbitrary actions to be taken b
  
 #### Example
 
+{% highlight json %}
     {
         "_type": "form",
         "href": "http://todo.example.com/create_todo/",
@@ -56,6 +58,7 @@ A DocJSON form is a control element that enables arbitrary actions to be taken b
             {"name": "completed"}
         ]
     }
+{% endhighlight %}
 
 ### List
 
@@ -68,6 +71,7 @@ A DocJSON list is a paginated list of data.  The contents of the list may be any
 
 #### Example
 
+{% highlight json %}
     {
         "_type": "list",
         "items": [
@@ -75,6 +79,7 @@ A DocJSON list is a paginated list of data.  The contents of the list may be any
         ]
         "next": "http://todo.example.com/items/?page=2"
     }
+{% endhighlight %}
 
 ---
 
@@ -95,18 +100,19 @@ DocJSON is designed with the aim of making developers lives easier, by introduci
 
 The following is an example of a DocJSON document representing a simple ToDo API.
 
+{% highlight json %}
     {
         "tabs": {
             "all": {"_type": "link", "href": "/"},
             "active": {"_type": "link", "href": "/?completed=False"},
-            "complete": {"_type": "link", "href": "/?completed=True"}
+            "completed": {"_type": "link", "href": "/?completed=True"}
         }
         "search": {
             "_type": "form",
             "method": "GET",
             "href": "/",
             "fields": [
-                {"name": "term", "required": true},
+                {"name": "text", "required": true}
             ]
         }
         "add_todo": {
@@ -114,8 +120,7 @@ The following is an example of a DocJSON document representing a simple ToDo API
             "method": "POST",
             "href": "/",
             "fields": [
-                {"name": "text", "required": true},
-                {"name": "completed"}
+                {"name": "title", "required": true}
             ]
         }
         "items": {
@@ -157,6 +162,7 @@ The following is an example of a DocJSON document representing a simple ToDo API
             ]
             "next": "/?page=2"
         }
+{% endhighlight %}
 
 The document presents the API client with the following controls:
 
@@ -174,6 +180,7 @@ Let's take a look at using a client library for DocJSON, to see what it can do. 
 
 Create and activate a new virtual environment, install `docjson`, and start python. 
 
+{% highlight python %}
     bash: virtualenv env
     bash: source env/bin/activate
     bash: pip install docjson
@@ -195,6 +202,7 @@ Create and activate a new virtual environment, install `docjson`, and start pyth
         },
         ...
     ]
+{% endhighlight %}
 
 #### Pagination
 
@@ -203,6 +211,7 @@ The first thing to notice here is the ellipsis at the end of our notes list.  Th
 
 If we iterate over the list or fetch an index that we don't yet have then the required pages will automatically be fetched for us.
 
+{% highlight python %}
     >>> print doc.notes[6]
     {
         'text': 'File tax return',
@@ -210,34 +219,44 @@ If we iterate over the list or fetch an index that we don't yet have then the re
         'delete': form(),
         'edit': form([text], [completed])
     }
+{% endhighlight %}
 
 #### Using forms
 
 We can also add new notes...
 
+{% highlight python %}
     >>> for idx in range(3):
-    >>>     doc = doc.add_note(text='New note %d' % idx)
+    >>>     doc = doc.add_note(text='New note #%d' % idx)
+{% endhighlight %}
 
-Edit an existing note...
+Or edit an existing note...
 
+{% highlight python %}
     >>> doc = doc.notes[2].edit(completed=True)
+{% endhighlight %}
 
-Or delete an existing note...
-
+{% highlight python %}
     >>> doc = doc.notes[0].delete()
+{% endhighlight %}
 
 If we attempt to use a form with incorrect parameters, the client library will alert us.
 
+{% highlight python %}
     >>> doc = doc.add_note()
-    ValueError: Missing required parameter 'text'
-    
+    SDFSDFSSDGSDFE
+{% endhighlight %}
+
+{% highlight python %}
     >>> doc = doc.add_note(foobar='New note')
-    ValueError: Unknown parameter 'foobar'
+    DGDFGDFFD
+{% endhighlight %}
 
 #### Searching
 
-As well as the forms for creating, editing and deleting notes, our document also contains a form for searching the existing notes:
+As well as the 
 
+{% highlight python %}
     >>> doc = doc.search(term='garage')
     >>> print doc.notes
     [
@@ -248,28 +267,28 @@ As well as the forms for creating, editing and deleting notes, our document also
             'edit': form([text], [completed])
         }
     ]
+{% endhighlight %}
 
 #### Following links
 
-Finally, let's take a look at using links within the document.  There are a set of links nested under the `tabs` object, that we can follow.  First let's retrieve a document containing all the completed notes.
-
-    >>> doc = doc.tabs.complete()
+{% highlight python %}
+    >>> doc = doc.tabs.completed.get()
     >>> for note in doc.notes:
     >>>     print note.completed, note.text
+{% endhighlight %}
 
-The client returns a new document after any form or link, so we can chain expressions together, and just examine the final resulting document.
-
-    >>> doc = doc.tabs.active().search(term='garage')
-    >>> for note in doc.notes:
-    >>>     print note.completed, note.text
+{% highlight python %}
+    >>> doc = doc.tabs.incomplete.get().search(term='garage')
+    >>> print doc.notes
+{% endhighlight %}
 
 ---
 
 ## Writing DocJSON services
 
-DocJSON is of course a language independant format, and you should be able to develop DocJSON services in any decent server-side framework, such as Rails, Django or Node.
+DocJSON is of course language independant, and you should be able to develop DocJSON services in any decent server-side framework, such as Rails, Django or Node.
 
-The example service used above is developed using Django REST framework.  You can take a look at the server implementation here [TODO]
+The example service used above is developed using Django REST framework, you can take a look here **TODO**
 
 
 ## Why you should be excited
@@ -278,13 +297,13 @@ The `docjson` client we've demonstrated doesn't have an prior knowledge about th
 
 It's simple, discoverable, and the client will always be instantly up to date with any server-side API changes.
 
-DocJSON is appropriate for a very wide range of APIs, as it allows for flexible data representation, and supports a full range of hypermedia controls rather than just hyperlinks, or just CRUD-style interactions.
+DocJSON is appropriate for a very wide range of APIs, as it allows for flexible data representation, and supports a full range of hypermedia controls rather than just links or just CRUD-style interactions.
 
 ## The future, and what you can do to help
 
 First up, feedback!
 
-[TODO]
+**TODO**
 
 we need client libraries in various different languages etc.etc.
 
@@ -292,4 +311,4 @@ we need client libraries in various different languages etc.etc.
 *Credits: Icon based on [document image][document-image] by [Gustavo Cordeiro][gustavo-cordeiro].*
 
 [document-image]: http://thenounproject.com/noun/document/#icon-No19369
-[gustavo-cordeiro]: http://thenounproject.com/gustavogcps/# 
+[gustavo-cordeiro]: http://thenounproject.com/gustavogcps/#
