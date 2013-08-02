@@ -29,10 +29,12 @@ class DocumentList(object):
         'target_not_list': "Expected a List when following links in paginated list."
     }
 
-    def __init__(self, data):
+    def __init__(self, data, base_url=None):
         assert 'items' in data, self._errors['missing_items']
         self._items = data['items']
         self._next = data.get('next')
+        if self._next:
+            self._next = urlparse.urljoin(base_url, self._next)
 
     def __getitem__(self, idx):
         if idx < 0:
@@ -140,8 +142,9 @@ class DocumentForm(object):
 
 
 class Document(object):
-    def __init__(self, data):
+    def __init__(self, data, base_url=None):
         self._data = data
+        self.url = base_url
 
     def __getattr__(self, attr):
         try:
@@ -150,13 +153,16 @@ class Document(object):
             raise AttributeError
 
     def __contains__(self, attr):
-        return attr in self._data
+        return (attr in self._data) or (attr == 'url')
 
     def __dir__(self):
         return self._data.keys()
 
     def __repr__(self):
         return _indentprint(self)
+
+    def refresh(self):
+        return get(self.url)
 
 
 class _DocJSONDecoder(json.JSONDecoder):
@@ -174,10 +180,10 @@ class _DocJSONDecoder(json.JSONDecoder):
         if identifier == 'link':
             return DocumentLink(data, self.base_url)
         elif identifier == 'list':
-            return DocumentList(data)
+            return DocumentList(data, self.base_url)
         elif identifier == 'form':
             return DocumentForm(data, self.base_url)
-        return Document(data)
+        return Document(data, self.base_url)
 
 
 def _indentprint(obj, indent=0):
@@ -203,7 +209,7 @@ def _indentprint(obj, indent=0):
         ret += '    ' * indent + ']'
         return ret
     elif isinstance(obj, DocumentLink):
-        return 'link -> ' + obj._href
+        return 'link()'
     elif isinstance(obj, DocumentForm):
         return 'form(' + obj.fields_as_string() + ')'
     return repr(obj)
