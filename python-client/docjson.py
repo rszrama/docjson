@@ -4,18 +4,22 @@ import json
 import urlparse
 
 
-version = '0.1.0'
+version = '0.2.0'
 
 
 class DocumentLink(object):
+    _errors = {
+        'missing_href': "Link missing 'href' key."
+    }
+
     def __init__(self, data, base_url=None):
-        assert 'href' in data, "Link missing 'href' key."
+        assert 'href' in data, self._errors['missing_href']
         self._href = urlparse.urljoin(base_url, data['href'])
 
     def __call__(self):
         return get(self._href)
 
-    def __str__(self):
+    def __repr__(self):
         return _indentprint(self)
 
 
@@ -51,7 +55,7 @@ class DocumentList(object):
             self._items.extend(doc._items)
             self._next = doc._next
 
-    def __str__(self):
+    def __repr__(self):
         return _indentprint(self)
 
 
@@ -85,7 +89,7 @@ class DocumentForm(object):
             }
         return request(self._method, self._href, **request_opts)
 
-    def __str__(self):
+    def __repr__(self):
         return _indentprint(self)
 
     def validate(self, **kwargs):
@@ -151,7 +155,7 @@ class Document(object):
     def __dir__(self):
         return self._data.keys()
 
-    def __str__(self):
+    def __repr__(self):
         return _indentprint(self)
 
 
