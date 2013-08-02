@@ -179,7 +179,7 @@ Create and activate a new virtual environment, install `docjson`, and start pyth
     bash: pip install docjson
     bash: python
     >>> doc = docjson.get('http://docjson.heroku.com')
-    >>> print doc.notes
+    >>> doc.notes
     [
         {
             'text': 'Call mum',
@@ -203,7 +203,7 @@ The first thing to notice here is the ellipsis at the end of our notes list.  Th
 
 If we iterate over the list or fetch an index that we don't yet have then the required pages will automatically be fetched for us.
 
-    >>> print doc.notes[6]
+    >>> doc.notes[6]
     {
         'text': 'File tax return',
         'completed': True,
@@ -239,7 +239,7 @@ If we attempt to use a form with incorrect parameters, the client library will a
 As well as the forms for creating, editing and deleting notes, our document also contains a form for searching the existing notes:
 
     >>> doc = doc.search(term='garage')
-    >>> print doc.notes
+    >>> doc.notes
     [
         {
             'text': 'Fix the garage lock',
@@ -251,17 +251,45 @@ As well as the forms for creating, editing and deleting notes, our document also
 
 #### Following links
 
-Finally, let's take a look at using links within the document.  There are a set of links nested under the `tabs` object, that we can follow.  First let's retrieve a document containing all the completed notes.
+Finally, let's take a look at using links within the document.  There are a set of links nested under the `'tabs'` object, that we can follow.
+
+
+    >>> doc.tabs
+    {
+        all: link(),
+        complete: link(),
+        incomplete: link()
+    }
+
+First let's retrieve a document containing all the completed notes.
 
     >>> doc = doc.tabs.complete()
-    >>> for note in doc.notes:
-    >>>     print note.completed, note.text
+    >>> doc.notes
+    {
+        'text': 'File tax return',
+        'completed': True,
+        'delete': form(),
+        'edit': form([text], [completed])
+    }
 
-The client returns a new document after any form or link, so we can chain expressions together, and just examine the final resulting document.
+We can also switch to the `'incomplete'` tab to get document just containing notes that have not been completed.
 
-    >>> doc = doc.tabs.active().search(term='garage')
-    >>> for note in doc.notes:
-    >>>     print note.completed, note.text
+    >>> doc = doc.tabs.incomplete()
+    >>> doc.notes
+    [
+        {
+            'text': 'Call mum',
+            'completed': False,
+            'delete': form(),
+            'edit': form([text], [completed])
+        },
+        {
+            text: 'Fix the garage lock',
+            completed: False,
+            delete: form()
+            edit: form([text], [completed]),
+        }
+    ]
 
 ---
 
