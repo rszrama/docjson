@@ -35,7 +35,7 @@ setup(
     author='Tom Christie',
     author_email='tom@tomchristie.com',
     py_modules=['docjson'],
-    install_requires=[],
+    install_requires=['requests'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
