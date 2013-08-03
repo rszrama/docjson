@@ -172,13 +172,13 @@ The document presents the API client with the following controls:
 
 Let's take a look at using a client library for DocJSON, to see what it can do.  There's currently a Python implementation.  Other languages are planned.
 
-Create and activate a new virtual environment, install `docjson`, and start python. 
+Create and activate a new virtual environment, run `pip install docjson`, and start python. 
 
     bash: virtualenv env
     bash: source env/bin/activate
     bash: pip install docjson
     bash: python
-    >>> doc = docjson.get('http://docjson.heroku.com')
+    >>> doc = docjson.get('http://docjson.herokuapp.com')
     >>> doc.notes
     [
         {
