@@ -135,7 +135,6 @@ The following is an example of a DocJSON document representing a simple ToDo API
                     },
                     "text": "Call mum",
                     "completed": false,
-                    "created": "2013-10-16T19:20:30+01:00"
                 },
                 {
                     "delete": {
@@ -151,7 +150,6 @@ The following is an example of a DocJSON document representing a simple ToDo API
                     },
                     "text": "Fix the garage lock",
                     "completed": true,
-                    "created": "2013-09-14T10:17:30+01:00"
                 },
                 ...
             ]
@@ -297,8 +295,7 @@ We can also switch to the `'incomplete'` tab to get document just containing not
 
 DocJSON is of course a language independant format, and you should be able to develop DocJSON services in any decent server-side framework, such as Rails, Django or Node.
 
-The example service used above is developed using Django REST framework.  You can take a look at the server implementation here [TODO]
-
+The example service used above is developed using Django REST framework.  The source code for the example API [is available on GitHub][server-example].
 
 ## Why you should be excited
 
@@ -312,12 +309,27 @@ DocJSON is appropriate for a very wide range of APIs, as it allows for flexible 
 
 First up, feedback!
 
-[TODO]
+If you're interested in DocJSON, I want to hear from you - what do you think works or doesn't work?  Would you consider using DocJSON for a service you're building?  Would you consider writing a DocJSON client library for your preffered programming language?  You can raise issues for discussion on the GitHub issue tracker, or e-mail the [Hypermedia mailing list][hypermedia-list].
 
-we need client libraries in various different languages etc.etc.
+Keep in mind that DocJSON is currently in early draft.  There are a number of possible future changes and additions to the specification including:
 
+* Defining how form validation failures should be reported.
+* Link relations, with the 'rel' attribute.
+* Defining the media types that DocJSON documents should use.
+* A top level 'document' type that includes metadata on the title of the document, canonical URL, DocJSON version etc.
+* Richer form fields, eg. type information, labels, descriptions etc.
+* Control over media type used in form requests, eg json by default, but add support for file upload using form multipart encoding.  Possibly support raw file uploads using arbitrary media types (eg 'image/*' for image uploads, '*/*' for any file uploads.)
+* Control over media types expected by responses, eg indicate image, video, audio links.
+
+The intent is that the specification should remain relatively simple, but that the hypermedia controls should be sufficiently expressive.
+
+I've also got some ideas around improving the python client library, and would definatly like to see ruby and javascript implmentations as a minimum.
+
+Personally, I'm really excited.  I think there's huge potential for a simple, generic hypermedia type such as DocJSON.
 
 *Credits: Icon based on [document image][document-image] by [Gustavo Cordeiro][gustavo-cordeiro].*
 
 [document-image]: http://thenounproject.com/noun/document/#icon-No19369
+[server-example]: https://github.com/tomchristie/docjson-todo
+[hypermedia-list]: http://librelist.com/browser/hypermedia/
 [gustavo-cordeiro]: http://thenounproject.com/gustavogcps/# 
