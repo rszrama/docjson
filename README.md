@@ -6,7 +6,7 @@
 
 DocJSON is a simple document format for building Hypermedia Web APIs.
 
-A DocJSON document consists of standard JSON, with the addition of a set of hypermedia controls that are used to express the actions that may be taken.  DocJSON is a flexible document format and does not impose any structural restrictions either on the data representation style, or on the layout of hypermedia controls used within the document.
+A DocJSON document consists of standard JSON with the addition of a set of hypermedia controls that are used to express the actions that may be taken.  DocJSON is a flexible document format that does not impose any structural restrictions either on the data representation style or on the layout of hypermedia controls used within the document.
 
 ---
 
@@ -14,7 +14,7 @@ A DocJSON document consists of standard JSON, with the addition of a set of hype
 
 **Warning:** *The DocJSON specification is currently in draft, and is subject to change at any time.*
 
-A document may be any valid JSON, with the single restriction that the object key `"_type"` is reserved. An JSON object which contains a key named `"_type"` is considered a control object.
+A document may be any valid JSON with the single restriction that the object key `"_type"` is reserved. Any JSON object containing a key named `"_type"` is considered a control object.
 
 Any URLs within a document may be either relative or absolute.  Relative URLs should be resolved with respect to the original document URL.
 
@@ -38,7 +38,7 @@ A DocJSON link is a control element that represents a hyperlink that may be foll
 
 A DocJSON form is a control element that enables arbitrary actions to be taken by the client.  Forms specify the URL and HTTP method that should be used for the action, as well as the details of any parameters that should be included in the request.
 
-* A link is any JSON object containing the `"_type"` key with a value of `"form"`.
+* A form is any JSON object containing the `"_type"` key with a value of `"form"`.
 * A form must have a key named `href`, which must contain a URL.
 * A form must have a key named `method`, which must contain a valid HTTP method name.
 * A form may have a key named `fields`.  If present, it must contain a list of objects.
@@ -59,7 +59,7 @@ A DocJSON form is a control element that enables arbitrary actions to be taken b
 
 ### List
 
-A DocJSON list is a paginated list of data.  The contents of the list may be any type of object, but the server does not have to populate the entire list, and can use pagination to serve further objects to the client on request.
+A DocJSON list is a paginated list of data.  The contents of the list may be any type of object, but the server does not have to populate the entire list and can use pagination to serve further objects to the client on request.
 
 * A link is any JSON object containing the `"_type"` key with a value of `"list"`.
 * A list must have a key named `items`, which must contain a list.
@@ -82,12 +82,12 @@ A DocJSON list is a paginated list of data.  The contents of the list may be any
 
 None of the existing hypermedia formats meet the particular design goals of DocJSON.
 
-* Collection+JSON presents a full range of hypermedia controls, but is specfic to representing list-like data structures.
-* HAL presents link controls, but lacks other hypermedia controls.
-* JSON API is specfic to data syncing between client and server, and does not present general purpose hypermedia controls.
-* HTML is sometimes used or proposed for Hypermedia APIs, and offers hypermedia controls, but is a poor fit for data representations.
+* Collection+JSON presents a full range of hypermedia controls but is specfic to representing list-like data structures.
+* HAL presents link controls but lacks other hypermedia controls.
+* JSON API is specfic to data syncing between client and server, and it does not present general purpose hypermedia controls.
+* HTML is sometimes used or proposed for Hypermedia APIs, and offers hypermedia controls, but it is a poor fit for data representations.
 
-DocJSON is designed with the aim of making developers lives easier, by introducing a flexible data format with a sufficienty complete set of hypermedia controls.  By doing so we enable generic client libraries to be used to interact with DocJSON APIs, rather than rebuilding client libraries from scratch with each new API service.
+DocJSON is designed with the aim of making developers' lives easier by introducing a flexible data format with a sufficienty complete set of hypermedia controls.  By doing so we enable generic client libraries to be used to interact with DocJSON APIs rather than rebuilding client libraries from scratch with each new API service.
 
 ---
 
@@ -158,7 +158,7 @@ The following is an example of a DocJSON document representing a simple ToDo API
 
 The document presents the API client with the following controls:
 
-* A set of tabs for switching between all notes, and complete or incomplete notes only.
+* A set of tabs for switching between all notes and complete or incomplete notes only.
 * A search control for displaying notes that match a search string.
 * A control for creating new todo notes.
 * A paginated list of notes.
